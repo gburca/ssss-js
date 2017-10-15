@@ -1,0 +1,29 @@
+{
+  "name": "ssss.js",
+  "version": "1.0.0",
+  "description": "Shamir's Secret Sharing Scheme",
+  "main": "ssss.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "bignumber.js": "^4.1.0"
+  },
+  "devDependencies": {
+    "browserify": "^14.5.0",
+    "preprocessor": "^1.4.0",
+    "qunitjs": "^2.4.1"
+  },
+  "scripts": {
+    "test": "qunit"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@ebixio.com:ssss"
+  },
+  "keywords": [
+    "http://point-at-infinity.org/ssss/"
+  ],
+  "author": "Gabriel Burca",
+  "license": "GPL-3.0"
+}

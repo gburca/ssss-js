@@ -1,0 +1,214 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <style>
+      body {
+        padding-top: 0px;
+        padding-right: 40px;
+        padding-left: 40px;
+      }
+
+      table { border-style: solid; }
+      td {
+        padding: 10px;
+      }
+
+      h1, h2, h3, h4 {margin: 1em 0 .5em; line-height: 1.25;}
+      h1 {font-size: 2em;}
+      h2 {font-size: 1.5em;}
+      h3 {font-size: 1.2em;}
+
+      input[type=number] { width: 80px; }
+
+      .log_warn {color: orange;}
+      .log_error {color: red; background: antiquewhite;}
+    </style>
+  </head>
+  <body>
+    <h1>Split</h1>
+
+    Use this form to split or encode a secret into a number of shared keys using
+    <a href="https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing">Shamir's
+    Secret Sharing Scheme</a>. The <b>Threshold</b> value determines the
+    minimum number of shares required to reconstruct the secret. It must be
+    less than or equal to the number of shares. The <b>Shares</b> value
+    determines how many shares will be generated.
+
+    <p>The <b>Token</b> is an optional text token used to name shares in order
+    to avoid confusion in case one utilizes secret sharing to protect several
+    independent secrets. The generated shares are prefixed by these tokens.
+    Don't use dashes if you want to be compatible with ssss-combine in Linux.
+    Try something like "BTC_th3" so you know that a threshold of 3 was used
+    when generating the keys (you will need to know this later when you combine
+    the keys).
+
+    <p>For advanced users: Non-ASCII input (input that is not plain-text) can
+    be used by checking the <b>Hex input</b> box and entering hex data (pairs
+    of characters from the [0-9a-z] set).
+
+    <p>Note: the set of generated shared keys is always different, even if the
+    secret is the same. You can not combine keys from different sets and expect
+    to recover the secret.
+
+    <p>
+    <form>
+      <table align="center">
+        <tr>
+          <td align="center">
+            Threshold:<br/>
+            <input type="number" id="threshold" size="2" maxlength="2" value="3">
+          </td>
+          <td align="center">
+            Shares:<br/>
+            <input type="number" id="numShares" size="2" maxlength="2" value="6">
+          </td>
+          <td>
+            Token (optional):<br/>
+            <input type="text" id="token">
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" align="center">
+            Secret: <input type="text" id="secret" size="30"><br/>
+          </td>
+          <td align="center">
+            Hex input: <input type="checkbox" id="hexInput"><br/>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="3" align="center">
+            <input type="button" onclick="generateKeys()" value="Generate Keys">
+          </td>
+        </tr>
+        <tr><td colspan="3">Generated keys:</div></td></tr>
+        <tr>
+          <td colspan="3">
+            <pre><textarea id="generatedKeys" rows="10" cols="70" readonly></textarea></pre>
+          </td>
+        </tr>
+        <tr><td colspan="3"><div id="splitLog"></div></td></tr>
+      </table>
+    </form>
+
+    <h1>Combine</h1>
+
+    Use this form to combine the shared keys and extract the secret. <i>You must
+    provide precisely number of keys that the secret owner specified as the
+    <b>Threshold</b> value when the shared keys were created.</i> If more (or
+    less) keys are provided, the secret recovery will fail (possibly by yielding
+    the wrong secret). You must also check the <b>Hex output</b> if the keys
+    were generated with <b>Hex input</b> checked.
+
+    <p>
+    <form>
+      <table align="center">
+        <tr>
+          <td>
+            Enter the keys here, one per line:<br/>
+            <pre><textarea id="keys" rows="10" cols="70"></textarea></pre>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            Hex output: <input type="checkbox" id="hexOutput"><br/>
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            <input type="button" onclick="combineKeys()" value="Combine Keys">
+          </td>
+        </tr>
+        <tr>
+          <td align="center">
+            Secret: <input type="text" id="combined" size="30" readonly><br/>
+          </td>
+        </tr>
+        <tr><td colspan="3"><div id="combineLog"></div></td></tr>
+      </table>
+    </form>
+    <script>
+
+// #include "bundle.js"
+
+    function logTo(elem) {
+      ['log','debug','info','warn','error'].forEach(function (verb) {
+        var orig = "orig_" + verb;
+        console[orig] = console[verb];
+        console[verb] = (function (method, verb, elem) {
+          return function () {
+            method.apply(console, arguments);
+            var msg = document.createElement('div');
+            msg.classList.add("log_" + verb);
+            msg.textContent = verb + ': ' + Array.prototype.slice.call(arguments).join(' ');
+            elem.appendChild(msg);
+          };
+        })(console[verb], verb, elem);
+      });
+    }
+
+    function logRestore() {
+      ['log','debug','info','warn','error'].forEach(function (verb) {
+        var orig = "orig_" + verb;
+        console[verb] = console[orig];
+      });
+    }
+
+    function clearLogs(id) {
+      var node = document.querySelector(id);
+      while (node.hasChildNodes()) {
+        node.removeChild(node.lastChild);
+      }
+    }
+
+    function generateKeys() {
+      clearLogs('#splitLog');
+      logTo(document.querySelector('#splitLog'));
+
+      var threshold = document.getElementById("threshold").value;
+      var numShares = document.getElementById("numShares").value;
+      var token     = document.getElementById("token").value.trim();
+      var secret    = document.getElementById("secret").value;
+      var hexInput  = document.getElementById("hexInput").checked;
+
+      try {
+        var elem = document.getElementById("generatedKeys");
+        var elem2 = document.getElementById("keys");
+        elem.value = "";
+        elem2.value = "";
+
+        var s = new ssss.SSSS(parseInt(threshold), parseInt(numShares), hexInput);
+        var keys = s.split(secret, token);
+
+        elem.value = keys.join("\n");
+        elem2.value = keys.slice(0, threshold).join("\n");
+      } catch (e) {
+        console.error(e);
+      } finally {
+        logRestore();
+      }
+    }
+
+    function combineKeys() {
+      clearLogs('#combineLog');
+      logTo(document.querySelector('#combineLog'));
+
+      try {
+        var hexOutput  = document.getElementById("hexOutput").checked;
+        document.getElementById("combined").value = "";
+        var keyTxt = document.getElementById("keys").value;
+        var keys = keyTxt.split("\n").filter(function(key) {
+          return key.length > 2;
+        });
+        var s = new ssss.SSSS(keys.length, 0, hexOutput);
+        var secret = s.combine(keys);
+        document.getElementById("combined").value = secret;
+      } catch (e) {
+        console.error(e);
+      } finally {
+        logRestore();
+      }
+    }
+
+    </script>
+  </body>
+</html>
