@@ -40,16 +40,16 @@ QUnit.test("encode decode hex", function(assert) {
   var threshold = 3, numKeys = 6, inputIsHex = true;
   var foo = new ssss(threshold, numKeys, inputIsHex);
 
-  //var secretIn = "7bcd123411223344";
-  var secretIn = "abcd0123";
+  var secretIn = "7bcd123411223344";
+  //var secretIn = "abcd0123";
   var keys = foo.split(secretIn, "foo");
   //console.log(keys);
   var secretOut = foo.combine(keys.slice(0, threshold));
   //console.log("Combined using same obj: " + secretOut);
   assert.equal(secretOut, secretIn);
 
-  // Single argument ctor (only for combining)
-  var foo2 = new ssss(threshold, numKeys, inputIsHex);
+  // When used only for combining, numKeys can be 0.
+  var foo2 = new ssss(threshold, 0, inputIsHex);
   secretOut = foo2.combine(keys.slice(0, threshold));
   //console.log("Combined using new obj: " + secretOut);
   assert.equal(secretOut, secretIn);

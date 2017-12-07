@@ -1,18 +1,20 @@
-This project is a JavaScript version of Shamir's Secret Sharing Scheme. It has
-2 distinguishing features:
+This project is a JavaScript version of [Shamir's Secret Sharing
+Scheme](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing). It has 2
+distinguishing features:
 
 1. It is interoperable and compatible with B. Poettering's Linux `ssss` utility
    (`ssss-split` and `ssss-combine`) from http://point-at-infinity.org/ssss/ so
    keys/shares can be created with one and recovered with the other. That
    project was used as the reference implementation for this project.
 2. It consists of a single `html` file which includes everything needed to
-   split and combine a secret. As a result it is fully usable from Windows,
-   Mac OSX, Linux, and other operating systems with a modern browser.
+   split and combine a secret (no network connection needed). As a result it is
+   fully usable from Windows, Mac OSX, Linux, and other operating systems with
+   a modern browser.
 
 There are some other implementations of Shamir's Secret Sharing Scheme (SSSS)
 floating around, but none seem to be compatible with each other. The Linux
-utility is great, but chances are the people you want to share the secret with
-are not running Linux.
+utility is great (which is why this project is compatible with it), but chances
+are the people you want to share the secret with are not running Linux.
 
 The author of the Linux utility maintains a web page where the utility can be
 demo'd, but the author notes that it's not secure and should not be used for
