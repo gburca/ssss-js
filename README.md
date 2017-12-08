@@ -37,6 +37,7 @@ Build
 =====
 - A simple `Makefile` is provided to assist with generating the stand-alone
   `html` page.
+- `npm` package is at: https://www.npmjs.com/package/ssss-js
 
 Test
 ====
