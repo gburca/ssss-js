@@ -1,3 +1,5 @@
+[![npm package](https://nodei.co/npm/ssss-js.png?downloads=true&downloadRank=true&stars=true)](https://nodei.co/npm/ssss-js/)
+
 This project is a JavaScript version of [Shamir's Secret Sharing
 Scheme](https://en.wikipedia.org/wiki/Shamir%27s_Secret_Sharing). It has 2
 distinguishing features:

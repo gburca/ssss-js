@@ -12,10 +12,12 @@
   "devDependencies": {
     "browserify": "^14.5.0",
     "preprocessor": "^1.4.0",
-    "qunit": "^2.4.1"
+    "qunit": "^2.4.1",
+    "standard": "^9.0.0"
   },
   "scripts": {
-    "test": "qunit"
+    "test": "qunit",
+    "lint": "standard"
   },
   "repository": {
     "type": "git",
