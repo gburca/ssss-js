@@ -1,6 +1,6 @@
 {
   "name": "ssss-js",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Shamir's Secret Sharing Scheme",
   "main": "ssss.js",
   "directories": {
@@ -16,7 +16,7 @@
     "standard": "^9.0.0"
   },
   "scripts": {
-    "test": "qunit",
+    "test": "npm run lint && qunit",
     "lint": "standard"
   },
   "repository": {

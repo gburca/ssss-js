@@ -2,7 +2,7 @@ npm:
 	npm install --no-optional
 
 test: npm
-	./node_modules/qunit/bin/qunit
+	npm run test
 
 html:
 	git rev-parse --verify --short HEAD > version.txt
